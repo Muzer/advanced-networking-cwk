@@ -6,3 +6,5 @@ Every X seconds, broadcast sending username + identifier
 If after X * Y seconds, an identifier update hasn't come from <user>, drop their name-identifier mapping
 
 To message a user, lookup their identifier and send to it.
+
+Lets set initial values of X=5 and Y=4
