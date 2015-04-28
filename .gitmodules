@@ -1,3 +1,3 @@
 [submodule "src/xbee/python-xbee"]
-	path = src/xbee/python-xbee
+	path = src/xbee/python_xbee
 	url = https://github.com/Muzer/python-xbee
