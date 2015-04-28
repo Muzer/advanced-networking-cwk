@@ -41,7 +41,7 @@ def broadcastName(username,myIP,bcIP):
     #s.bind(("192.168.42.255", 9006))
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    s.sendto(data,('192.168.42.255', NAME_PORT))
+    s.sendto(data,(bcIP, NAME_PORT))
     s.close()
     return
 
