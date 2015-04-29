@@ -35,4 +35,4 @@ while True:
     
     data = raw_input("Message for " + recipient + ": ")
     # send message
-    sendMessage(zigbee,username,data,nameLocatorMap.get(recipient),myAddr)
+    sendMessage(zigbee,username,data,nameLocatorMap.get(recipient),myAddr, recipient)

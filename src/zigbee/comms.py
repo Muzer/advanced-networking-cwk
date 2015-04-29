@@ -56,8 +56,8 @@ def unicastName(zigbee, username,recipientID,myAddr):
     zigbee.send("tx", dest_addr_long=struct.pack(">Q", recipientID), dest_addr='\xff\xfe', data=data)
     return
 
-def sendMessage(zigbee, senderName, message, destinationAddr, myAddr):
-    data = json.dumps({TYPE:MESSAGE, SENDER:senderName, BODY:message})
+def sendMessage(zigbee, senderName, message, destinationAddr, myAddr, username):
+    data = json.dumps({TYPE:MESSAGE, SENDER:senderName, BODY:message, USERNAME:username})
     zigbee.send("tx", dest_addr_long=struct.pack(">Q", destinationAddr), dest_addr='\xff\xfe', data=data)
     return
 
@@ -76,7 +76,7 @@ def timeOuter(zigbee, nameTimeMap,myName,myAddr,bcAddr):
         time.sleep(LOOP_TIME)
     return
 
-def listener(zigbee, nameLocatorMap, nameTimeMap, bcAddr, myAddr):
+def listener(zigbee, nameLocatorMap, nameTimeMap, bcAddr, myAddr, router=False, nlmWiFi=None, WiFiMod=None, myIP=None, bcIP=None, myName=None):
     #build a listener
     print("listening for names/messages")
     while True:
@@ -92,11 +92,13 @@ def listener(zigbee, nameLocatorMap, nameTimeMap, bcAddr, myAddr):
                     username = jData.get(USERNAME)
                     identifier = jData.get(IDENTIFIER)
                     if username not in nameLocatorMap.keys():
-                        print(username + " has joined the chat")
+                        print(username + " (" + str(identifier) + ") has joined the chat")
                     #store the name
                     nameLocatorMap[username] = identifier
                     #store time received
                     nameTimeMap[username] = calendar.timegm(time.gmtime())
+                    if router and myName != username and not nlmWiFi.has_key(username):
+                        WiFiMod.broadcastName(username, myIP, bcIP)
                 else:
                     print("Unable to read name")
             elif msgType == MESSAGE:
@@ -104,7 +106,14 @@ def listener(zigbee, nameLocatorMap, nameTimeMap, bcAddr, myAddr):
                 if jData.has_key(SENDER) and jData.has_key(BODY):
                     senderName = jData.get(SENDER)
                     message = jData.get(BODY)
-                    print(senderName + ": " + message)
+                    username = jData.get(USERNAME)
+                    if (not router) or (username == myName):
+                        print(senderName + ": " + message)
+                    else:
+                        if nlmWiFi.has_key(username):
+                            WiFiMod.sendMessage(senderName, message, nlmWiFi.get(username), myIP, username)
+                        else:
+                            print("Username '" + username + "' is not registered")
                 else:
                     print("Unable to read message")
             else:

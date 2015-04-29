@@ -54,8 +54,8 @@ def unicastName(username,recipientID,myIP):
     s.close()
     return
 
-def sendMessage(senderName, message, destinationIP, myIP):
-    data = json.dumps({TYPE:MESSAGE, SENDER:senderName, BODY:message})
+def sendMessage(senderName, message, destinationIP, myIP, username):
+    data = json.dumps({TYPE:MESSAGE, SENDER:senderName, BODY:message, USERNAME:username})
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind((myIP, 9004))
     s.sendto(data,(destinationIP, MSG_PORT))
@@ -77,7 +77,7 @@ def timeOuter(nameTimeMap,myName,myIP,bcIP):
         time.sleep(LOOP_TIME)
     return
 
-def nameListener(nameLocatorMap, nameTimeMap, bcIP):
+def nameListener(nameLocatorMap, nameTimeMap, bcIP, router=False, nlmZigbee=None, zigbeeMod=None, zigbee=None, myAddr=None, bcAddr=None, myName=None):
     #build a listener
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind((bcIP,NAME_PORT))
@@ -94,12 +94,17 @@ def nameListener(nameLocatorMap, nameTimeMap, bcIP):
                 if jData.has_key(USERNAME) and jData.has_key(IDENTIFIER):
                     username = jData.get(USERNAME)
                     identifier = jData.get(IDENTIFIER)
+                    if router and username in nlmZigbee.keys():
+                        continue
                     if username not in nameLocatorMap.keys():
-                        print(username + " has joined the chat")
+                        print(username + " (" + identifier + ") has joined the chat")
                     #store the name
                     nameLocatorMap[username] = identifier
                     #store time received
                     nameTimeMap[username] = calendar.timegm(time.gmtime())
+                    #Broadcast over bridge
+                    if router and username != myName and not nlmZigbee.has_key(username):
+                        zigbeeMod.broadcastName(zigbee, username, myAddr, bcAddr)
                 else:
                     print("Unable to read name")
             else:
@@ -109,7 +114,7 @@ def nameListener(nameLocatorMap, nameTimeMap, bcIP):
     print("Name listener failed. Restart program")    
     return
 
-def messageListener(nameLocatorMap, myIP):
+def messageListener(nameLocatorMap, myIP, router=False, nlmZigbee=None, zigbeeMod=None, zigbee=None, myAddr=None, myName=None):
     #build a listener
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.bind((myIP,MSG_PORT))
@@ -126,7 +131,14 @@ def messageListener(nameLocatorMap, myIP):
                 if jData.has_key(SENDER) and jData.has_key(BODY):
                     senderName = jData.get(SENDER)
                     message = jData.get(BODY)
-                    print(senderName + ": " + message)
+                    username = jData.get(USERNAME)
+                    if (not router) or (username == myName):
+                        print(senderName + ": " + message)
+                    else:
+                        if nlmZigbee.has_key(username):
+                            zigbeeMod.sendMessage(zigbee, senderName, message, nlmZigbee.get(username), myAddr, username)
+                        else:
+                            print("Username '" + username + "' is not registered")
                 else:
                     print("Unable to read message")
             else:

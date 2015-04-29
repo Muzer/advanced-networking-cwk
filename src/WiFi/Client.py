@@ -31,5 +31,5 @@ while True:
     
     data = raw_input("Message for " + recipient + ": ")
     # send message
-    sendMessage(username,data,nameLocatorMap.get(recipient),myIP)
+    sendMessage(username,data,nameLocatorMap.get(recipient),myIP, recipient)
     
