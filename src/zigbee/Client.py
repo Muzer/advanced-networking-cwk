@@ -21,7 +21,7 @@ bcAddr = 0x000000000000FFFF
 print(myAddr)
 #nameLocatorMap[username] = myIP
 thread.start_new_thread(listener, (zigbee, nameLocatorMap,nameTimeMap,bcAddr,myAddr))
-thread.start_new_thread(timeOuter, (zigbee, nameTimeMap, username,myAddr,bcAddr))
+thread.start_new_thread(timeOuter, (zigbee, nameLocatorMap,nameTimeMap, username,myAddr,bcAddr))
 #start process timing out name mappings
 
 while True:

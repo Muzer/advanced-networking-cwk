@@ -61,7 +61,7 @@ def sendMessage(zigbee, senderName, message, destinationAddr, myAddr, username):
     zigbee.send("tx", dest_addr_long=struct.pack(">Q", destinationAddr), dest_addr='\xff\xfe', data=data)
     return
 
-def timeOuter(zigbee, nameTimeMap,myName,myAddr,bcAddr):
+def timeOuter(zigbee, nameLocatorMap,nameTimeMap,myName,myAddr,bcAddr):
     while True:
         broadcastName(zigbee, myName, myAddr, bcAddr)
         now = calendar.timegm(time.gmtime())
@@ -72,6 +72,7 @@ def timeOuter(zigbee, nameTimeMap,myName,myAddr,bcAddr):
                 toRemove.add(name)
         for name in toRemove:
             nameTimeMap.pop(name)
+            nameLocatorMap.pop(name)
             print(name + " removed")
         time.sleep(LOOP_TIME)
     return

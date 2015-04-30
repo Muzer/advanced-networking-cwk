@@ -17,7 +17,7 @@ print(myIP)
 #nameLocatorMap[username] = myIP
 thread.start_new_thread(messageListener, (nameLocatorMap,myIP,))
 thread.start_new_thread(nameListener, (nameLocatorMap,nameTimeMap,bcIP,))
-thread.start_new_thread(timeOuter, (nameTimeMap, username,myIP,bcIP,))
+thread.start_new_thread(timeOuter, (nameLocatorMap,nameTimeMap,username,myIP,bcIP,))
 #start process timing out name mappings
 
 while True:

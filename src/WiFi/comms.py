@@ -62,7 +62,7 @@ def sendMessage(senderName, message, destinationIP, myIP, username):
     s.close()
     return
 
-def timeOuter(nameTimeMap,myName,myIP,bcIP):
+def timeOuter(nameLocatorMap,nameTimeMap,myName,myIP,bcIP):
     while True:
         broadcastName(myName, myIP, bcIP)
         now = calendar.timegm(time.gmtime())
@@ -73,6 +73,7 @@ def timeOuter(nameTimeMap,myName,myIP,bcIP):
                 toRemove.add(name)
         for name in toRemove:
             nameTimeMap.pop(name)
+            nameLocatorMap.pop(name)
             print(name + " removed")
         time.sleep(LOOP_TIME)
     return
