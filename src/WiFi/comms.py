@@ -87,7 +87,10 @@ def nameListener(nameLocatorMap, nameTimeMap, bcIP, router=False, nlmZigbee=None
         #wait for a connection and read it
         data, addr = s.recvfrom(1024)
         #process it
-        jData = json.loads(data)
+        try:
+            jData = json.loads(data)
+        except ValueError:
+            continue
         if jData.has_key(TYPE):
             msgType = jData.get(TYPE)
             if msgType == NAMING:
@@ -124,7 +127,10 @@ def messageListener(nameLocatorMap, myIP, router=False, nlmZigbee=None, zigbeeMo
         #wait for a connection and read it
         data, addr = s.recvfrom(1024)
         #process it
-        jData = json.loads(data)
+        try:
+            jData = json.loads(data)
+        except ValueError:
+            continue
         if jData.has_key(TYPE):
             msgType = jData.get(TYPE)
             if msgType == MESSAGE:

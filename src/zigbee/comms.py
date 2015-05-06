@@ -84,7 +84,10 @@ def listener(zigbee, nameLocatorMap, nameTimeMap, bcAddr, myAddr, router=False, 
         #wait for a connection and read it
         frame = get_frame(zigbee, 'rx')
         #process it
-        jData = json.loads(frame["rf_data"])
+        try:
+            jData = json.loads(frame["rf_data"])
+        except ValueError:
+            continue
         if jData.has_key(TYPE):
             msgType = jData.get(TYPE)
             if msgType == NAMING:
