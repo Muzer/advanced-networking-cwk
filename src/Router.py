@@ -29,7 +29,7 @@ bcAddr = 0x000000000000FFFF
 thread.start_new_thread(WiFi.comms.messageListener, (nameLocatorMapWiFi,myIP,True,nameLocatorMapZigbee,zigbee.comms, zbee, myAddr, username))
 thread.start_new_thread(WiFi.comms.nameListener, (nameLocatorMapWiFi,nameTimeMapWiFi,bcIP,True,nameLocatorMapZigbee,zigbee.comms,zbee,myAddr,bcAddr, username))
 thread.start_new_thread(zigbee.comms.listener, (zbee, nameLocatorMapZigbee,nameTimeMapZigbee,bcAddr,myAddr,True,nameLocatorMapWiFi,WiFi.comms, myIP, bcIP, username))
-thread.start_new_thread(WiFi.comms.timeOuter, (nameLocatorMapWifi, nameTimeMapWiFi, username,myIP,bcIP,))
+thread.start_new_thread(WiFi.comms.timeOuter, (nameLocatorMapWiFi, nameTimeMapWiFi, username,myIP,bcIP,))
 thread.start_new_thread(zigbee.comms.timeOuter, (zbee, nameLocatorMapZigbee, nameTimeMapZigbee, username,myAddr,bcAddr))
 #start process timing out name mappings
 
